@@ -1,7 +1,7 @@
 <?php
 namespace Deployer;
 
-require 'recipe/laravel.php';
+require 'recipe/common.php';
 
 // Configuration
 
@@ -22,6 +22,20 @@ host('cla-q2a-dev')
 // Tasks
 
 
-// [Optional] if deploy fails automatically unlock.
-after('deploy:failed', 'deploy:unlock');
+set('shared_files', [
+    'qa-config.php',
+]);
 
+
+task('deploy', [
+    'deploy:prepare',
+    'deploy:lock',
+    'deploy:release',
+    'deploy:update_code',
+    // 'deploy:vendors',
+    'deploy:shared',
+    'deploy:symlink',
+    'deploy:unlock',
+    'cleanup',
+])->desc('Deploy your project');
+after('deploy', 'success');
