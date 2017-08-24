@@ -1,9 +1,0 @@
-    LogLevel warn
-
-    LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
-
-    ErrorLog {{ apache_vhost_error_log }}
-
-    CustomLog {{ apache_vhost_custom_log }}
-
-    CustomLog {{ apache_vhost_request_log }}

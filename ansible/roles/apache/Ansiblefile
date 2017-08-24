@@ -1,3 +1,0 @@
-role "env",
-  git: "git@github.umn.edu:ansible-roles/env.git"
-

@@ -1,8 +1,0 @@
----
-- hosts: all
-  roles:
-    - env
-  tasks:
-    - include: "{{ playbook_dir }}/roles/env/test/integration/index_shared_libraries.yml"
-      vars:
-        test_directory: /usr/lib64/{{ env_ld_so_confd_prefix }}test

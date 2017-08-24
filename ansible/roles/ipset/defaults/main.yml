@@ -1,9 +1,0 @@
----
-# ipset_rule_names is an array of ruleset names that should be opened.
-# To find a list of available rules, run `sudo ipset list`.
-ipset_rule_names:
-  - "http_allowed"
-
-ipset_ips:
-  - "0.0.0.0/1"
-  - "128.0.0.0/1"

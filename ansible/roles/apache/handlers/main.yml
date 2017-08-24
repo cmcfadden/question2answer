@@ -1,3 +1,0 @@
----
-- name: restart apache
-  command: "{{ apache_restart_command }}"

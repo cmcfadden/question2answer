@@ -1,3 +1,0 @@
----
-- name: index shared libraries
-  command: ldconfig

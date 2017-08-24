@@ -1,8 +1,0 @@
-- name: apache
-  src: git+ssh://git@github.umn.edu/ansible-roles/apache.git
-- name: apache_mod_php
-  src: git+ssh://git@github.umn.edu/ansible-roles/apache_mod_php.git
-- name: apache_mod_shib
-  src: git+ssh://git@github.umn.edu/ansible-roles/apache_mod_shib.git
-- name: ipset
-  src: git+ssh://git@github.umn.edu/ansible-roles/ipset.git  
