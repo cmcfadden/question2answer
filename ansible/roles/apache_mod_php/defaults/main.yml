@@ -1,0 +1,185 @@
+---
+apache_mod_php_write_user: "{{ apache_httpd_process_user }}"
+apache_mod_php_group: "{{ env_group }}"
+apache_mod_php_dir_mode: "{{ env_dir_mode }}"
+apache_mod_php_etc: "{{ env_etc }}"
+apache_mod_php_log_dir: "{{ env_var_log }}/php"
+apache_mod_php_log_dir_owner: "{{ apache_mod_php_write_user if ansible_distribution_major_version == '7' else env_user }}"
+apache_mod_php_apache_confd_dir: "{{ apache_confd_dir }}"
+apache_mod_php_version: "{{ '5.4' if ansible_distribution_major_version == '7' else '5.3' }}"
+apache_mod_php_major_version: "{{ apache_mod_php_version.split('.')[0] }}"
+apache_mod_php_package_matrix:
+  '6':
+    '2.2':
+      '5.3': "php"
+      '5.4': "php54-php"
+    '2.4':
+      '5.5': "php55-php"
+      '5.6': "rh-php56-php"
+      '7.0': "rh-php70-php"
+  '7':
+    '2.4':
+      '5.4': "php"
+      '5.5': "php55-php"
+      '5.6': "rh-php56-php"
+      '7.0': "rh-php70-php"
+
+apache_mod_php_package: "{{ apache_mod_php_package_matrix[ansible_distribution_major_version][apache_version][apache_mod_php_version] | default('undefined') }}"
+apache_mod_php_module_name: "php{{apache_mod_php_major_version}}_module"
+apache_mod_php_module_so: "lib{{ apache_mod_php_package }}{{ apache_mod_php_major_version }}.so"
+apache_mod_php_module_so_path: "modules/{{ apache_mod_php_module_so }}"
+
+apache_mod_php_use_package_php_ini: false
+apache_mod_php_ini_path: "{{ apache_mod_php_etc }}/php.ini"
+
+apache_mod_php_smtp: "localhost"
+apache_mod_php_smtp_port: 25
+apache_mod_php_session_entropy_file: "/dev/urandom"
+
+apache_mod_php_request_order: "GP"
+# Values for these sections taken from the OWASP Cheat Sheet:
+# https://www.owasp.org/index.php/PHP_Configuration_Cheat_Sheet
+
+# OWASP Advises that you update these to fit your app
+# override them in your deployment
+#
+apache_mod_php_file_uploads: false
+apache_mod_php_memory_limit: "32M"
+apache_mod_php_post_max_size: "32M"
+apache_mod_php_upload_tmp_dir: null
+apache_mod_php_max_file_uploads: 2
+apache_mod_php_upload_max_filesize: "25M"
+
+apache_mod_php_doc_root: ''
+apache_mod_php_open_basedir: ''
+
+apache_mod_php_session_name: 'PHPSESSID'
+apache_mod_php_session_cookie_path: '/'
+apache_mod_php_session_referer_check: ''
+
+apache_mod_php_timezone: 'America/Chicago'
+
+# OWASP Guide defaults
+#
+apache_mod_php_expose_php: false
+apache_mod_php_error_reporting: "E_ALL"
+apache_mod_php_display_errors: false
+apache_mod_php_display_startup_errors: false
+apache_mod_php_log_errors: true
+apache_mod_php_error_log: "{{ apache_mod_php_log_dir }}/error.log"
+apache_mod_php_ignore_repeated_errors: false
+
+apache_mod_php_include_path: null
+apache_mod_php_extension_dir: null
+apache_mod_php_mime_magic_magicfile: null
+apache_mod_php_allow_url_fopen: false
+apache_mod_php_allow_url_include: false
+apache_mod_php_variables_order: "GPCS"
+apache_mod_php_allow_webdav_methods: false
+
+apache_mod_php_enable_dl: false
+apache_mod_php_disable_classes: ''
+
+apache_mod_php_session_auto_start: false
+apache_mod_php_session_save_handler: 'files'
+apache_mod_php_session_save_path: null
+apache_mod_php_session_hash_function: 1
+apache_mod_php_session_hash_bits_per_character: 6
+apache_mod_php_session_use_trans_sid: 0
+apache_mod_php_session_cookie_domain: null
+apache_mod_php_session_cookie_lifetime: 0
+apache_mod_php_session_cookie_secure: true
+apache_mod_php_session_cookie_httponly: 1
+apache_mod_php_session_use_cookies: 1
+apache_mod_php_session_use_only_cookies: 1
+apache_mod_php_session_cache_expire: 30
+apache_mod_php_default_socket_timeout: 60
+
+apache_mod_php_max_execution_time: 60
+apache_mod_php_report_memleaks: true
+apache_mod_php_track_errors: false
+apache_mod_php_html_errors: false
+
+# OWASP Disable potentially dangerous functions
+#
+apache_mod_php_disable_system: true
+apache_mod_php_disable_exec: true
+apache_mod_php_disable_shell_exec: true
+apache_mod_php_disable_passthru: true
+apache_mod_php_disable_phpinfo: true
+apache_mod_php_disable_show_source: true
+apache_mod_php_disable_popen: true
+apache_mod_php_disable_proc_open: true
+
+apache_mod_php_disable_fopen_with_path: true
+apache_mod_php_disable_dbmopen: true
+apache_mod_php_disable_dbase_open: true
+apache_mod_php_disable_putenv: true
+apache_mod_php_disable_move_uploaded_file: true
+
+apache_mod_php_disable_chdir: true
+apache_mod_php_disable_mkdir: true
+apache_mod_php_disable_rmdir: true
+apache_mod_php_disable_chmod: true
+apache_mod_php_disable_rename: true
+
+apache_mod_php_disable_filepro: true
+apache_mod_php_disable_filepro_rowcount: true
+apache_mod_php_disable_filepro_retrieve: true
+apache_mod_php_disable_posix_mkfifo: true
+
+apache_mod_php_disable_curl_exec: true
+apache_mod_php_disable_curl_multi_exec: true
+apache_mod_php_disable_parse_ini_file: true
+
+apache_mod_php_ini_disable_functions:
+  - function: "exec"
+    disabled: "{{ apache_mod_php_disable_exec }}"
+  - function: "passthru"
+    disabled: "{{ apache_mod_php_disable_passthru }}"
+  - function: "shell_exec"
+    disabled: "{{ apache_mod_php_disable_shell_exec }}"
+  - function: "system"
+    disabled: "{{ apache_mod_php_disable_system }}"
+  - function: "proc_open"
+    disabled: "{{ apache_mod_php_disable_proc_open }}"
+  - function: "popen"
+    disabled: "{{ apache_mod_php_disable_popen }}"
+  - function: "curl_exec"
+    disabled: "{{ apache_mod_php_disable_curl_exec }}"
+  - function: "curl_multi_exec"
+    disabled: "{{ apache_mod_php_disable_curl_multi_exec }}"
+  - function: "parse_ini_file"
+    disabled: "{{ apache_mod_php_disable_parse_ini_file }}"
+  - function: "show_source"
+    disabled: "{{ apache_mod_php_disable_show_source }}"
+  - function: "phpinfo"
+    disabled: "{{ apache_mod_php_disable_phpinfo }}"
+  - function: "fopen_with_path"
+    disabled: "{{ apache_mod_php_disable_fopen_with_path }}"
+  - function: "dbmopen"
+    disabled: "{{ apache_mod_php_disable_dbmopen }}"
+  - function: "dbase_open"
+    disabled: "{{ apache_mod_php_disable_dbase_open }}"
+  - function: "putenv"
+    disabled: "{{ apache_mod_php_disable_putenv }}"
+  - function: "move_uploaded_file"
+    disabled: "{{ apache_mod_php_disable_move_uploaded_file }}"
+  - function: "chdir"
+    disabled: "{{ apache_mod_php_disable_chdir }}"
+  - function: "mkdir"
+    disabled: "{{ apache_mod_php_disable_mkdir }}"
+  - function: "rmdir"
+    disabled: "{{ apache_mod_php_disable_rmdir }}"
+  - function: "chmod"
+    disabled: "{{ apache_mod_php_disable_chmod }}"
+  - function: "rename"
+    disabled: "{{ apache_mod_php_disable_rename }}"
+  - function: "filepro"
+    disabled: "{{ apache_mod_php_disable_filepro }}"
+  - function: "filepro_rowcount"
+    disabled: "{{ apache_mod_php_disable_filepro_rowcount }}"
+  - function: "filepro_retrieve"
+    disabled: "{{ apache_mod_php_disable_filepro_retrieve }}"
+  - function: "posix_mkfifo"
+    disabled: "{{ apache_mod_php_disable_posix_mkfifo }}"

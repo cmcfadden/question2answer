@@ -1,0 +1,43 @@
+---
+- name: check for valid combination of apache_version, distro version, and php version
+  assert:
+    that: "apache_mod_php_package != 'undefined'"
+  tags:
+    - apache_mod_php
+
+- name: ensure php is installed
+  become: "{{ ansible_distribution_major_version == '7' }}"
+  yum:
+    pkg: "{{ apache_mod_php_package }}"
+    state: "present"
+  tags:
+    - installed_by_default
+    - apache_mod_php
+
+- name: create php log directory
+  file:
+    path: "{{ apache_mod_php_log_dir }}"
+    state: "directory"
+    recurse: true
+    owner: "{{ apache_mod_php_log_dir_owner }}"
+    group: "{{ apache_mod_php_group }}"
+    mode: "{{ apache_mod_php_dir_mode }}"
+  tags:
+    - apache_mod_php
+
+- name: install php.ini
+  template:
+    src: "php.ini.j2"
+    dest: "{{ apache_mod_php_ini_path }}"
+  notify: "restart apache"
+  when: not apache_mod_php_use_package_php_ini
+  tags:
+    - apache_mod_php
+
+- name: enable the php apache module
+  template:
+    src: "php.conf.j2"
+    dest: "{{ apache_mod_php_apache_confd_dir }}/php.conf"
+  notify: "restart apache"
+  tags:
+    - apache_mod_php

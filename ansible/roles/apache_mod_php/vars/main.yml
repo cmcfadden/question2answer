@@ -1,0 +1,7 @@
+---
+# When using php from SCL, apache must ALSO be used from scl. This overrides the default apache handling to
+# always pull from SCL when using a php SCL package.
+#
+# This is in vars rather than defaults due to the way ansible resolves defaults. If this was overriden in defaults
+# the apache role would use its default value rather than the value specified here.
+apache_from_scl: "{{ apache_mod_php_package != 'php' and apache_mod_php_package != 'php54-php' }}"

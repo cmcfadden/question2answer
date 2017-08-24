@@ -1,0 +1,13 @@
+{% for port in apache_mod_ssl_listen_ports %}
+Listen {{ port }} https
+{% endfor %}
+
+SSLPassPhraseDialog {{ apache_mod_ssl_pass_dialog }}
+
+SSLSessionCache         shmcb:/run/httpd/sslcache(512000)
+SSLSessionCacheTimeout  300
+
+SSLRandomSeed startup file:/dev/urandom  256
+SSLRandomSeed connect builtin
+
+SSLCryptoDevice builtin

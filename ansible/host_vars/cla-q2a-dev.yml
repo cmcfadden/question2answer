@@ -1,0 +1,8 @@
+---
+hostname: cla-q2a-dev.cla.umn.edu
+apache_vhosts:
+- server_name: "{{ hostname }}"
+  use_ssl: true
+  document_root: "/swadm/var/www/html/current/public"
+  ssl_certificate_cer: "{{ lookup('file', 'ssl/cla-q2a-dev.cla.umn.edu.cert.pem')}}"
+  ssl_certificate_key: "{{ lookup('file', 'ssl/cla-q2a-dev.cla.umn.edu.key.pem')}}"

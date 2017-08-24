@@ -1,0 +1,28 @@
+---
+# defaults file for env
+
+ansible_become: true
+ansible_become_flags: "-i"
+env_user: swadm
+env_group: swadm
+env_user_home: /home/swadm
+env_dir_mode: "2775"
+env_file_mode: "0664"
+env_exe_mode: "0775"
+
+env_editor: vim
+env_profiled_prefix: umn_ansible_
+env_ld_so_confd_prefix: umn_ansible_
+env_ld_so_confd_suffix: -x86_64.conf
+
+env_root: /swadm
+env_bin: "{{ env_root }}/bin"
+env_etc: "{{ env_root }}/etc"
+env_etc_profiled: "{{ env_etc + '/profile.d' if ansible_distribution_major_version == '6' else '/etc/profile.d' }}"
+env_etc_ld_so_confd: /etc/ld.so.conf.d/
+env_opt: "{{ env_root }}/opt"
+env_var: "{{ env_root }}/var"
+env_var_log: "{{ env_var }}/log"
+env_var_run: "{{ env_var }}/run"
+env_src: "{{ env_root }}/src"
+env_tmp: "{{ env_root }}/tmp"

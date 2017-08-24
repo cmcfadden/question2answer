@@ -1,0 +1,13 @@
+---
+galaxy_info:
+  author: Debbie Gillespie
+  description: Copies in the default php.conf file
+  company: University of Minnesota
+  min_ansible_version: 2.1
+  platforms:
+  - name: EL
+dependencies:
+  - name: env
+    src: git+ssh://git@github.umn.edu/ansible-roles/env.git
+  - name: apache
+    src: git+ssh://git@github.umn.edu/ansible-roles/apache.git

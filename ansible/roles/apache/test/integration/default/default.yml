@@ -1,0 +1,46 @@
+---
+- hosts: all
+  vars:
+    pki_dir: "/swadm/etc/pki/tls"
+    apache_vhost_ssl_certificate_local_store: "files"
+    apache_ssl_certificate_key_passphrase: S"`|!';'";'`~#$0*&><
+    apache_vhosts:
+      - server_name: "testvhost"
+        document_root: "/swadm/var/www/html"
+      - server_name: "testvhost-ssl"
+        use_ssl: true
+        ssl_certificate_interm_cer: "{{ lookup('file', 'files/cert.pem') }}"
+        ssl_certificate_cer: "{{ lookup('file', 'files/cert.pem') }}"
+        ssl_certificate_key: "{{ lookup('file', 'files/key.pem') }}"
+        document_root: "/swadm/var/www/html_ssl"
+  pre_tasks:
+    - user:
+        name: swadm
+    - yum:
+        name: epel-release
+    - yum:
+        name: centos-release-scl
+      when: "ansible_distribution_major_version == '6'"
+    - yum:
+        name: centos-release-scl-rh
+      when: "ansible_distribution_major_version == '6'"
+    - lineinfile:
+        dest: "/etc/hosts"
+        line: "127.0.0.1 {{ item.server_name }}"
+      with_items: "{{ apache_vhosts }}"
+    - file:
+        path: "{{ item.document_root }}"
+        state: directory
+      with_items: "{{ apache_vhosts }}"
+    - file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ pki_dir }}/certs"
+        - "{{ pki_dir }}/private"
+    - copy:
+        dest: "{{ item.document_root }}/index.html"
+        content: "Successful vhost test"
+      with_items: "{{ apache_vhosts }}"
+  roles:
+    - apache

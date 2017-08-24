@@ -1,0 +1,42 @@
+{%  if item.use_ssl | default(false) %}
+<VirtualHost *:80>
+    ServerName {{ item.server_name }}
+    RedirectPermanent / https://{{ item.server_name }}/
+</VirtualHost>
+{% endif %}
+
+<VirtualHost *:{{ 443 if item.use_ssl | default(false) else 80 }}>
+    ServerName {{ item.server_name }}
+    DocumentRoot {{ item.document_root }}
+
+    <Directory "{{ item.document_root }}">
+        Options FollowSymLinks
+        AllowOverride All
+{% if apache_version | version_compare('2.4', operator='>=') %}
+        Require all granted
+{% endif %}
+{% for addition in item.vhost_directory_additions | default([]) %}
+    {{ addition }}
+{% endfor %}
+    </Directory>
+
+{%  if item.use_ssl | default(false) %}
+    Include {{ apache_vhost_ssl_std_file }}
+
+    SSLCertificateChainFile {{ apache_vhost_ssl_certs_dir }}/{{ item.ssl_certificate_interm_cer_file | default(item.server_name + '_interm.cer') }}
+    SSLCertificateFile {{ apache_vhost_ssl_certs_dir }}/{{ item.ssl_certificate_cer_file | default(item.server_name + '.cer') }}
+    SSLCertificateKeyFile {{ apache_vhost_ssl_keys_dir }}/{{ item.ssl_certificate_key_file | default(item.server_name + '.key') }}
+{% include "ssl_logs.conf.j2" %}
+{% else %}
+{% include "non_ssl_logs.conf.j2" %}
+{% endif %}
+
+{% if item.maintenance_mode | default(false) %}
+{% include "maintenance_redirects.conf.j2" %}
+{% endif %}
+
+{% for addition in item.vhost_additions | default([]) %}
+    {{ addition }}
+{% endfor %}
+</VirtualHost>
+

@@ -1,0 +1,25 @@
+- name: create shared library test directory {{ test_directory }}
+  file:
+    path: "{{ test_directory }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "{{ env_dir_mode }}"
+- name: copy shared library into {{ test_directory }}
+  copy:
+    src: /usr/lib64/libutil.so
+    dest: "{{ test_directory }}/libutil.so"
+    owner: root
+    group: root
+    mode: "{{ env_exe_mode }}"
+- name: create config file for {{ test_directory }}
+  lineinfile:
+    dest: "{{ env_etc_ld_so_confd }}/{{ env_ld_so_confd_prefix }}test{{ env_ld_so_confd_suffix }}"
+    line: "{{ test_directory }}"
+    state: present
+    create: yes
+    owner: root
+    group: root
+    mode: "{{ env_file_mode }}"
+  notify:
+    - index shared libraries

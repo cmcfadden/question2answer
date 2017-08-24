@@ -1,0 +1,50 @@
+---
+# tasks file for env
+
+- name: create group
+  user:
+    name: "{{ env_group }}"
+    state: present
+  tags:
+    - env
+
+- name: create user
+  user:
+    name: "{{ env_user }}"
+    group: "{{ env_group }}"
+    state: present
+  tags:
+    - env
+
+- name: create directories
+  include: directory_creation.yml
+  vars:
+    env_dir: "{{ item }}"
+  with_items:
+    - "{{ env_root }}"
+    - "{{ env_src }}"
+    - "{{ env_bin }}"
+    - "{{ env_etc }}"
+    - "{{ env_var }}"
+    - "{{ env_opt }}"
+    - "{{ env_etc_profiled }}"
+    - "{{ env_etc_ld_so_confd }}"
+    - "{{ env_var_log }}"
+    - "{{ env_var_run }}"
+    - "{{ env_tmp }}"
+  tags:
+    - env
+
+- name: create custom scripts in profile.d
+  template:
+    src: "{{ item }}.sh.j2"
+    dest: "{{ env_etc_profiled }}/{{ env_profiled_prefix }}{{ item }}.sh"
+    owner: "{{ env_user }}"
+    group: "{{ env_group }}"
+    mode: "{{ env_file_mode }}"
+    force: yes
+  with_items:
+    - bin_path
+    - default_editor
+  tags:
+    - env

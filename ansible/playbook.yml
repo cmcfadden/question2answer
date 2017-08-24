@@ -1,0 +1,29 @@
+---
+- hosts: cla-q2a-dev
+  tasks:
+    - yum:
+        pkg: "rh-php56-php-mbstring"
+        state: "present"
+    - yum:
+        pkg: "rh-php56-php-pdo"
+        state: "present"
+    - yum:
+        pkg: "rh-php56-php-xml"
+        state: "present" 
+    - yum:
+        pkg: "rh-php56-php-mysqlnd"
+        state: "present"
+    - file:
+        src: "/opt/rh/rh-php56/enable"
+        dest: "/etc/profile.d/rh-php56.sh"
+        state: link
+  vars_prompt:
+  # - name: "apache_mod_shib_ssl_key_password"
+    # prompt: "What's the shib key password?"
+  - name: "apache_ssl_certificate_key_passphrase"
+    prompt: "What's the ssl key password?"
+  roles:
+    - apache
+    - apache_mod_php
+    # - apache_mod_shib
+    - ipset

@@ -1,0 +1,18 @@
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: ansible_playbook
+  roles_path: test/roles
+  hosts: all
+
+platforms:
+  - name: centos-7.2
+
+suites:
+  - name: ipset-module
+    playbook: test/integration/ipset-module/default.yml
+    verifier:
+      patterns:
+        - "test/integration/ipset-module/*_spec.rb"

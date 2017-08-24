@@ -1,0 +1,48 @@
+---
+- name: ensure mod_ssl is installed
+  yum:
+    pkg: mod_ssl
+    state: present
+  when: not apache_from_scl
+  tags:
+    - installed_by_default
+
+- name: ensure apache 2.4 mod_ssl is installed from scl
+  yum:
+    pkg: httpd24-mod_ssl
+    state: present
+  when: apache_from_scl
+  tags:
+    - request_installation
+
+- name: Add mod_ssl module
+  copy:
+    dest: "{{ apache_conf_modulesd_dir }}"
+    src: conf.modules.d/00-ssl.conf
+    owner: "{{ apache_user }}"
+    group: "{{ apache_group }}"
+    mode: "{{ apache_file_mode }}"
+  when: apache_version | version_compare('2.4', '=')
+  notify:
+    - restart apache
+
+- name: Enable SSL support in apache
+  template:
+    src: ssl-{{ apache_version }}.conf.j2
+    dest: "{{ apache_mod_ssl_config_file }}"
+    owner: "{{ apache_user }}"
+    group: "{{ apache_group }}"
+    mode: "{{ apache_file_mode }}"
+  notify:
+   - restart apache
+
+- name: Ensure directories for ssl certificates and keys exists
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ apache_user }}"
+    group: "{{ apache_group }}"
+    mode: "{{ apache_dir_mode }}"
+  with_items:
+    - "{{ apache_vhost_ssl_certs_dir }}"
+    - "{{ apache_vhost_ssl_keys_dir }}"
