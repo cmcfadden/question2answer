@@ -52,13 +52,13 @@ define('SHIB_ACCESS_DENIED_MESSAGE','You are not authorized to access to this ap
  */
 
 // Shibboleth login attribute
-define('SHIB_USERID_ATTR','eppn');
+define('SHIB_USERID_ATTR','uid');
 
 // Shibboleth login alternative attribute
-define('SHIB_ALTERNATE_USERID_ATTR','mail');
+define('SHIB_ALTERNATE_USERID_ATTR','eppn');
 
 // Shibboleth mail attribute
-define('SHIB_MAIL_ATTR','mail');
+define('SHIB_MAIL_ATTR','eppn');
 
 // Shibboleth mail alternative attribute
 define('SHIB_ALTERNATE_MAIL_ATTR','supannMailPerso');
