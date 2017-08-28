@@ -126,7 +126,7 @@
 	{
 
 		return array(
-			'login' => "/Shibboleth.sso/Login?target=" . urlencode($_SERVER['SERVER_NAME'] . "/" . $redirect_back_to_url),
+			'login' => "/Shibboleth.sso/Login?target=" . urlencode("https://" . $_SERVER['SERVER_NAME'] . "/" . $redirect_back_to_url),
 			'register' => null,
 			'logout' => "/Shibboleth.sso/Logout?return=https%3a%2f%2fidp2.shib.umn.edu%2fidp%2fLogoutUMN",
 		);
